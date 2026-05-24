@@ -7,13 +7,11 @@ import { AboutSection } from '@/components/AboutSection';
 import { TestimonialsSection } from '@/components/TestimonialsSection';
 import { Footer } from '@/components/Footer';
 import { CustomCursor } from '@/components/CustomCursor';
-import { ScrollProgress } from '@/components/ScrollProgress';
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#F5F0E8]" style={{ fontFamily: 'var(--font-poppins), Poppins, sans-serif', cursor: 'none' }}>
       <CustomCursor />
-      <ScrollProgress />
       <Navbar />
       <Hero />
       <MenuSection />

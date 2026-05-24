@@ -28,17 +28,19 @@ export function Navbar() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500 max-w-[1200px] w-[calc(100%-2rem)] ${
           scrolled
-            ? 'bg-white/90 backdrop-blur-xl shadow-[0_2px_30px_rgba(0,0,0,0.08)]'
-            : 'bg-white border-b border-[#EDE8DD]'
+            ? 'top-4 bg-white/70 backdrop-blur-md border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.06)] rounded-full'
+            : 'top-6 bg-transparent border border-transparent rounded-full'
         }`}
       >
-        <div className="max-w-[1240px] mx-auto px-8 h-[70px] flex items-center justify-between gap-8">
+        <div className={`mx-auto px-6 md:px-8 flex items-center justify-between gap-8 transition-all duration-500 ${
+          scrolled ? 'h-[64px]' : 'h-[76px] bg-white/80 md:bg-white/40 backdrop-blur-sm border border-black/5 rounded-full'
+        }`}>
 
           {/* ── Logo ── */}
           <motion.a
-            href="#home"
+            href="/"
             whileHover={{ scale: 1.02 }}
             className="flex items-center gap-2.5 shrink-0 cursor-pointer group"
           >
@@ -50,17 +52,17 @@ export function Navbar() {
               </svg>
             </div>
             <div className="flex flex-col leading-none">
-              <span className="font-black text-[17px] tracking-[2.5px] text-[#1A1A1A] uppercase">
+              <span className="font-black text-[16px] tracking-[2px] text-[#1A1A1A] uppercase">
                 KUSHAVO
               </span>
-              <span className="text-[9px] tracking-[1.5px] text-[#E8341A] font-semibold uppercase">
+              <span className="text-[8px] tracking-[1.2px] text-[#E8341A] font-semibold uppercase">
                 Fine Dining
               </span>
             </div>
           </motion.a>
 
           {/* ── Desktop Nav Links ── */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1 bg-[#F5F0E8]/40 border border-black/5 rounded-full p-1">
             {navLinks.map((link, i) => (
               <motion.a
                 key={link.label}
@@ -69,18 +71,18 @@ export function Navbar() {
                 initial={{ opacity: 0, y: -12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.08 * i + 0.3 }}
-                className={`relative px-4 py-2 text-[13px] font-medium rounded-full transition-colors duration-200 group ${
+                className={`relative px-5 py-2 text-[12px] font-semibold tracking-wide rounded-full transition-colors duration-200 group ${
                   activeLink === link.label
-                    ? 'text-[#E8341A] bg-[#E8341A]/8'
-                    : 'text-[#444] hover:text-[#E8341A] hover:bg-[#E8341A]/5'
+                    ? 'text-white'
+                    : 'text-[#444] hover:text-[#E8341A]'
                 }`}
               >
-                {link.label}
+                <span className="relative z-10">{link.label}</span>
                 {activeLink === link.label && (
                   <motion.span
-                    layoutId="navUnderline"
-                    className="absolute bottom-0 left-4 right-4 h-[2px] bg-[#E8341A] rounded-full"
-                    transition={{ type: 'spring', bounce: 0.3, duration: 0.5 }}
+                    layoutId="navPillBackground"
+                    className="absolute inset-0 bg-[#E8341A] rounded-full shadow-md shadow-[#E8341A]/20"
+                    transition={{ type: 'spring', bounce: 0.22, duration: 0.6 }}
                   />
                 )}
               </motion.a>
@@ -104,7 +106,7 @@ export function Navbar() {
                     autoFocus
                     type="text"
                     placeholder="Search menu..."
-                    className="w-full bg-[#F5F0E8] rounded-full px-4 py-2 text-[13px] text-[#333] outline-none border border-[#E8341A]/30 focus:border-[#E8341A]"
+                    className="w-full bg-[#F5F0E8]/60 backdrop-blur-sm rounded-full px-4 py-2 text-[12px] text-[#333] outline-none border border-black/5 focus:border-[#E8341A]"
                     onBlur={() => setSearchOpen(false)}
                   />
                 </motion.div>
@@ -114,9 +116,9 @@ export function Navbar() {
                   whileHover={{ scale: 1.08 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setSearchOpen(true)}
-                  className="w-9 h-9 rounded-full flex items-center justify-center text-[#555] hover:text-[#E8341A] hover:bg-[#E8341A]/8 transition-all duration-200"
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-[#555] hover:text-[#E8341A] hover:bg-black/5 transition-all duration-200"
                 >
-                  <Search size={17} />
+                  <Search size={16} />
                 </motion.button>
               )}
             </AnimatePresence>
@@ -125,10 +127,10 @@ export function Navbar() {
             <motion.button
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.95 }}
-              className="relative w-9 h-9 rounded-full flex items-center justify-center text-[#555] hover:text-[#E8341A] hover:bg-[#E8341A]/8 transition-all duration-200"
+              className="relative w-9 h-9 rounded-full flex items-center justify-center text-[#555] hover:text-[#E8341A] hover:bg-black/5 transition-all duration-200"
             >
-              <ShoppingBag size={17} />
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#E8341A] rounded-full text-white text-[9px] font-bold flex items-center justify-center">
+              <ShoppingBag size={16} />
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#E8341A] rounded-full text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
                 3
               </span>
             </motion.button>
@@ -137,19 +139,20 @@ export function Navbar() {
             <div className="w-px h-5 bg-[#DDD8D0] mx-1" />
 
             {/* CTA Button */}
-            <motion.button
+            <motion.a
+              href="/contact"
               whileHover={{ scale: 1.04, backgroundColor: '#C42B14' }}
               whileTap={{ scale: 0.97 }}
-              className="bg-[#E8341A] text-white text-[12px] font-semibold px-5 py-2.5 rounded-full shadow-md shadow-[#E8341A]/25 hover:shadow-[#E8341A]/40 transition-all duration-200"
+              className="bg-[#E8341A] text-white text-[11px] font-bold tracking-wide uppercase px-6 py-3 rounded-full shadow-md shadow-[#E8341A]/20 hover:shadow-[#E8341A]/35 transition-all duration-200"
             >
               Reserve Table
-            </motion.button>
+            </motion.a>
           </div>
 
           {/* ── Mobile Hamburger ── */}
           <motion.button
             whileTap={{ scale: 0.92 }}
-            className="lg:hidden w-9 h-9 rounded-full border border-[#E5E0D8] flex items-center justify-center text-[#333]"
+            className="lg:hidden w-9 h-9 rounded-full border border-black/5 bg-white/40 flex items-center justify-center text-[#333]"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
             <AnimatePresence mode="wait">
@@ -175,27 +178,27 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="fixed top-[70px] left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-b border-[#EDE8DD] shadow-xl"
+            className="fixed top-[90px] left-4 right-4 z-40 bg-white/95 backdrop-blur-xl border border-black/5 rounded-3xl shadow-xl overflow-hidden"
           >
-            <div className="max-w-[1240px] mx-auto px-8 py-6 flex flex-col gap-1">
+            <div className="px-6 py-6 flex flex-col gap-1">
               {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
                   onClick={() => { setActiveLink(link.label); setMobileOpen(false); }}
-                  className={`px-4 py-3 rounded-xl text-[14px] font-medium transition-all ${
+                  className={`px-4 py-3 rounded-xl text-[13px] font-semibold transition-all ${
                     activeLink === link.label
                       ? 'text-[#E8341A] bg-[#E8341A]/8'
-                      : 'text-[#444] hover:text-[#E8341A] hover:bg-[#F5F0E8]'
+                      : 'text-[#444] hover:text-[#E8341A] hover:bg-[#F5F0E8]/50'
                   }`}
                 >
                   {link.label}
                 </a>
               ))}
               <div className="pt-3 border-t border-[#EDE8DD] mt-2">
-                <button className="w-full bg-[#E8341A] text-white text-[13px] font-semibold py-3 rounded-xl">
+                <a href="/contact" className="block text-center w-full bg-[#E8341A] text-white text-[12px] font-bold py-3 rounded-xl uppercase tracking-wider">
                   Reserve a Table
-                </button>
+                </a>
               </div>
             </div>
           </motion.div>
