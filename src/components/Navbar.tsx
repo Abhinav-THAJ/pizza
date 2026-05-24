@@ -4,10 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ShoppingBag, Menu, X } from 'lucide-react';
 
 const navLinks = [
-  { label: 'Home', href: '#home' },
-  { label: 'Our Menu', href: '#our-menu' },
-  { label: 'About Us', href: '#about' },
-  { label: 'Contact Us', href: '#contact' },
+  { label: 'Home', href: '/' },
+  { label: 'Our Menu', href: '/#our-menu' },
+  { label: 'About Us', href: '/about' },
+  { label: 'Contact Us', href: '/contact' },
 ];
 
 export function Navbar() {

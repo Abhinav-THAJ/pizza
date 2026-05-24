@@ -3,7 +3,13 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
 
 const footerLinks = {
-  'Quick Links': ['Home', 'Our Menu', 'About Us', 'Contact Us', 'Reservations'],
+  'Quick Links': [
+    { label: 'Home', href: '/' },
+    { label: 'Our Menu', href: '/#our-menu' },
+    { label: 'About Us', href: '/about' },
+    { label: 'Contact Us', href: '/contact' },
+    { label: 'Reservations', href: '/contact' },
+  ],
   'Categories': ['Salads', 'Soups', 'Pasta', 'Pizza', 'Desserts'],
   'Visit Us': [],
 };
@@ -124,14 +130,14 @@ export function Footer() {
           <h4 className="text-[12px] font-bold tracking-[2px] text-white/40 uppercase mb-5">Quick Links</h4>
           <ul className="space-y-3">
             {footerLinks['Quick Links'].map((link) => (
-              <li key={link}>
+              <li key={link.label}>
                 <motion.a
-                  href="#"
+                  href={link.href}
                   whileHover={{ x: 4 }}
                   className="text-[13px] text-white/60 hover:text-[#E8341A] transition-colors duration-200 flex items-center gap-2 group"
                 >
                   <span className="w-1 h-1 rounded-full bg-[#E8341A]/50 group-hover:bg-[#E8341A] transition-colors" />
-                  {link}
+                  {link.label}
                 </motion.a>
               </li>
             ))}
