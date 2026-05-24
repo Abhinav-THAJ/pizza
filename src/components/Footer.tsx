@@ -95,9 +95,10 @@ export function Footer() {
         <div>
           <div className="flex items-center gap-2.5 mb-5">
             <div className="w-9 h-9 rounded-xl bg-[#E8341A] flex items-center justify-center shadow-lg shadow-[#E8341A]/30">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M8 3C8 3 6 10 10 14C12 16 12 18 12 18V22" stroke="white" strokeWidth="2.2" strokeLinecap="round"/>
-                <path d="M18 3V10C18 13 16 14 14 14L12 18" stroke="white" strokeWidth="2.2" strokeLinecap="round"/>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M7 3V21" />
+                <path d="M7 12C7 6 11 3 18 3C18 10 14 12 7 12Z" fill="white" fillOpacity="0.2" />
+                <path d="M7 12C14 12 18 14 18 21C11 21 7 18 7 12Z" fill="white" fillOpacity="0.2" />
               </svg>
             </div>
             <div className="flex flex-col leading-none">

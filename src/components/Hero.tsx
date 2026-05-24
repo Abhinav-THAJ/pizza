@@ -143,30 +143,13 @@ export function Hero() {
         className="absolute right-[100px] top-[200px] w-[300px] h-[300px] rounded-full bg-[#E8341A]/8"
       />
 
-      <div className="relative z-10 max-w-[1200px] mx-auto px-6 flex items-center min-h-[calc(100vh-70px)]">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-6 flex flex-col lg:flex-row items-center min-h-[calc(100vh-70px)] pb-20 lg:pb-0">
         {/* Left Content */}
-        <div className="flex-1 pr-8 pt-4">
-          {/* Label */}
-          <motion.p
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-[11px] font-semibold tracking-[3px] uppercase text-[#E8341A] mb-5 flex items-center gap-2"
-          >
-            <motion.span
-              animate={{ rotate: [0, 20, -20, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 3 }}
-              className="inline-block"
-            >
-              ★
-            </motion.span>
-            World Best Restaurant
-          </motion.p>
-
+        <div className="w-full lg:flex-1 lg:pr-8 pt-24 lg:pt-0 flex flex-col items-center lg:items-start text-center lg:text-left">
           {/* Headline – word split */}
           <h1
             ref={headlineRef}
-            className="text-[54px] md:text-[64px] font-bold leading-[1.1] text-[#1A1A1A] mb-6 overflow-hidden"
+            className="text-[44px] md:text-[54px] font-bold leading-[1.1] text-[#1A1A1A] mb-6 overflow-hidden"
             style={{ perspective: '800px' }}
           >
             {['Flavors', 'that'].map((w, i) => (
@@ -193,10 +176,11 @@ export function Hero() {
           </motion.p>
 
           {/* Buttons */}
-          <div className="flex items-center gap-4 mb-14">
+          <div className="flex flex-wrap justify-center lg:justify-start items-center gap-4 mb-14">
             <button
               onMouseMove={handleMagnet}
               onMouseLeave={handleMagnetLeave}
+              onClick={() => { document.getElementById('our-menu')?.scrollIntoView({ behavior: 'smooth' }); }}
               className="hero-btn bg-[#E8341A] text-white text-[13px] font-semibold px-8 py-3.5 rounded-full shadow-lg shadow-[#E8341A]/25 hover:shadow-[#E8341A]/40 hover:bg-[#C42B14] transition-colors duration-200"
             >
               Order Now
@@ -204,17 +188,18 @@ export function Hero() {
             <button
               onMouseMove={handleMagnet}
               onMouseLeave={handleMagnetLeave}
-              className="hero-btn border-2 border-[#E8341A] text-[#E8341A] text-[13px] font-semibold px-8 py-3.5 rounded-full hover:bg-[#E8341A] hover:text-white transition-all duration-200"
+              onClick={() => window.location.href = '/contact'}
+              className="hero-btn bg-[#1A1A1A] text-white text-[13px] font-semibold px-8 py-3.5 rounded-full shadow-lg shadow-black/20 hover:bg-[#333] transition-colors duration-200"
             >
               Book a Table
             </button>
           </div>
 
           {/* Stats with animated numbers */}
-          <div className="flex items-start gap-0">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-0">
             {stats.map((stat, i) => (
-              <div key={i} className="hero-stat flex items-start">
-                {i > 0 && <div className="w-px h-12 bg-[#D5CFC7] mx-8 mt-1" />}
+              <div key={i} className="hero-stat flex items-center sm:items-start text-center sm:text-left flex-col sm:flex-row">
+                {i > 0 && <div className="hidden sm:block w-px h-12 bg-[#D5CFC7] mx-8 mt-1" />}
                 <div>
                   <div className="text-[34px] font-black text-[#1A1A1A] leading-none mb-1">
                     <AnimatedNumber target={stat.num} suffix={stat.suffix} />
@@ -233,7 +218,7 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.7, x: 80 }}
           animate={{ opacity: 1, scale: 1, x: 0 }}
           transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="flex-1 flex justify-center items-center relative"
+          className="w-full lg:flex-1 mt-16 lg:mt-0 flex justify-center items-center relative"
         >
           <div ref={pizzaRef} className="relative" style={{ transform: 'rotate(-8deg)' }}>
             {/* Glow effect */}
@@ -245,7 +230,7 @@ export function Hero() {
             <img
               src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=85&fit=crop"
               alt="Featured Pizza"
-              className="w-[460px] h-[460px] object-cover rounded-full shadow-2xl relative z-10"
+              className="w-[300px] h-[300px] md:w-[460px] md:h-[460px] object-cover rounded-full shadow-2xl relative z-10"
               style={{ boxShadow: '0 40px 100px rgba(0,0,0,0.2)' }}
             />
             {/* Spinning ring 1 */}

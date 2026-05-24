@@ -44,7 +44,7 @@ export function AboutSection() {
   return (
     <section ref={sectionRef} className="bg-[#EDE8DD] py-20">
       <div className="max-w-[1200px] mx-auto px-6">
-        <div className="grid grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           {/* Left – Images */}
           <div className="about-images flex gap-4">
             {/* Tall left image */}
@@ -95,6 +95,7 @@ export function AboutSection() {
             <motion.button
               whileHover={{ scale: 1.04, backgroundColor: '#C42B14' }}
               whileTap={{ scale: 0.97 }}
+              onClick={() => { document.getElementById('our-menu')?.scrollIntoView({ behavior: 'smooth' }); }}
               className="bg-[#E8341A] text-white text-[13px] font-semibold px-8 py-3 rounded-full transition-colors duration-200"
             >
               Order Now

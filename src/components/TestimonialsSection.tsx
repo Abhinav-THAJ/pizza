@@ -116,7 +116,7 @@ export function TestimonialsSection() {
           </div>
 
           {/* Cards grid */}
-          <div className="test-cards-grid grid grid-cols-2 gap-6">
+          <div className="test-cards-grid grid grid-cols-1 md:grid-cols-2 gap-6">
             {testimonials.map((t, i) => (
               <motion.div
                 key={i}

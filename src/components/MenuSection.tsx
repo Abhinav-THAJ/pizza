@@ -172,13 +172,13 @@ export function MenuSection() {
         </div>
 
         {/* Category Tabs */}
-        <div className="menu-tabs flex items-center border-b border-[#DDD8D0] mb-8">
+        <div className="menu-tabs flex flex-wrap items-center border-b border-[#DDD8D0] mb-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
           {categories.map((cat) => (
             <motion.button
               key={cat}
               onClick={() => handleCategoryChange(cat)}
               whileTap={{ scale: 0.96 }}
-              className={`relative text-[12px] font-semibold tracking-[1.5px] px-5 py-3 transition-colors duration-200 ${
+              className={`relative text-[12px] font-semibold tracking-[1.5px] px-3 sm:px-5 py-3 transition-colors duration-200 ${
                 activeCategory === cat ? 'text-[#E8341A]' : 'text-[#888] hover:text-[#333]'
               }`}
             >
@@ -192,13 +192,13 @@ export function MenuSection() {
               )}
             </motion.button>
           ))}
-          <div className="flex-1" />
+          <div className="flex-1 hidden md:block" />
           {subCategories.map((cat) => (
             <motion.button
               key={cat}
               onClick={() => handleCategoryChange(cat)}
               whileTap={{ scale: 0.96 }}
-              className={`relative text-[12px] font-semibold tracking-[1.5px] px-5 py-3 transition-colors duration-200 ${
+              className={`relative text-[12px] font-semibold tracking-[1.5px] px-3 sm:px-5 py-3 transition-colors duration-200 ${
                 activeCategory === cat ? 'text-[#E8341A]' : 'text-[#888] hover:text-[#333]'
               }`}
             >
@@ -215,7 +215,7 @@ export function MenuSection() {
         </div>
 
         {/* Food Grid – 3D tilt cards */}
-        <div ref={gridRef} className="grid grid-cols-4 gap-5 mb-10">
+        <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
           {items.map((item, i) => (
             <TiltCard key={`${activeCategory}-${i}`} className="cursor-pointer">
               <div className="bg-white rounded-2xl p-4 flex flex-col items-center text-center h-full shadow-sm hover:shadow-xl transition-shadow duration-300">
@@ -234,6 +234,7 @@ export function MenuSection() {
                 <motion.button
                   whileHover={{ scale: 1.05, backgroundColor: '#E8341A', color: '#fff', borderColor: '#E8341A' }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => alert(`Added ${item.name} to cart!`)}
                   className="border border-[#E8341A] text-[#E8341A] text-[11px] font-semibold px-4 py-1.5 rounded-full transition-all duration-200 mt-auto"
                 >
                   Order Now
@@ -248,6 +249,7 @@ export function MenuSection() {
           <motion.button
             whileHover={{ scale: 1.05, backgroundColor: '#C42B14', boxShadow: '0 12px 30px rgba(232,52,26,0.35)' }}
             whileTap={{ scale: 0.97 }}
+            onClick={() => { document.getElementById('our-menu')?.scrollIntoView({ behavior: 'smooth' }); }}
             className="bg-[#E8341A] text-white text-[13px] font-semibold px-9 py-3.5 rounded-full shadow-md shadow-[#E8341A]/20 transition-all duration-200"
           >
             View All Menu

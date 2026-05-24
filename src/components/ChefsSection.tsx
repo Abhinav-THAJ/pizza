@@ -77,7 +77,7 @@ export function ChefsSection() {
         </div>
 
         {/* Chefs Grid */}
-        <div className="chefs-grid grid grid-cols-3 gap-8">
+        <div className="chefs-grid grid grid-cols-1 md:grid-cols-3 gap-8">
           {chefs.map((chef, i) => (
             <motion.div
               key={i}
