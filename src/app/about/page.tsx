@@ -54,7 +54,7 @@ const team = [
   {
     name: 'Ronald Richards',
     role: 'Sous Chef',
-    bio: 'Ronald's expertise in Mediterranean cuisine adds a distinctive depth and warmth to our seasonal menus.',
+    bio: "Ronald's expertise in Mediterranean cuisine adds a distinctive depth and warmth to our seasonal menus.",
     img: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=85&fit=crop&crop=face',
   },
 ];
