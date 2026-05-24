@@ -96,14 +96,18 @@ export function Footer() {
           <div className="flex items-center gap-2.5 mb-5">
             <div className="w-9 h-9 rounded-xl bg-[#E8341A] flex items-center justify-center shadow-lg shadow-[#E8341A]/30">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M7 3V21" />
-                <path d="M7 12C7 6 11 3 18 3C18 10 14 12 7 12Z" fill="white" fillOpacity="0.2" />
-                <path d="M7 12C14 12 18 14 18 21C11 21 7 18 7 12Z" fill="white" fillOpacity="0.2" />
+                <path d="M12 21L21 6C21 6 17.5 3 12 3C6.5 3 3 6 3 6L12 21Z" fill="white" fillOpacity="0.15" />
+                <path d="M3 6C6.5 3 17.5 3 21 6" strokeWidth="2"/>
+                <path d="M12 21L21 6" strokeOpacity="0.6"/>
+                <path d="M12 21L3 6" strokeOpacity="0.6"/>
+                <circle cx="12" cy="10" r="1.5" fill="white" stroke="none"/>
+                <circle cx="9" cy="14" r="1.2" fill="white" stroke="none"/>
+                <circle cx="15" cy="14" r="1.2" fill="white" stroke="none"/>
               </svg>
             </div>
             <div className="flex flex-col leading-none">
               <span className="font-black text-[16px] tracking-[2px] text-white uppercase">KUSHAVO</span>
-              <span className="text-[9px] tracking-[1.5px] text-[#E8341A] font-semibold uppercase">Fine Dining</span>
+              <span className="text-[9px] tracking-[1.5px] text-[#E8341A] font-semibold uppercase">Artisan Pizza</span>
             </div>
           </div>
           <p className="text-[13px] text-white/50 leading-relaxed mb-6 max-w-[220px]">
