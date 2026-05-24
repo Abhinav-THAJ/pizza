@@ -1,22 +1,27 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Poppins, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/SmoothScroll";
-import { Navbar } from "@/components/Navbar";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-poppins",
+  display: "swap",
+});
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
   variable: "--font-playfair",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "L'Élégance | A Culinary Experience Beyond Taste",
-  description: "Where luxury dining meets timeless elegance. Experience our award-winning cinematic fine-dining.",
+  title: "Kushavo | Flavors That Speak Louder Than Words",
+  description:
+    "Experience the finest flavors at Kushavo restaurant. Crafted with organic ingredients, our menu offers salads, soups, pasta, pizza and more.",
 };
 
 export default function RootLayout({
@@ -25,10 +30,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
-      <body className="min-h-screen bg-matte-black text-soft-ivory flex flex-col selection:bg-warm-gold selection:text-matte-black">
+    <html lang="en" className={`${poppins.variable} ${playfair.variable}`}>
+      <body className="min-h-screen bg-[#F5F0E8] flex flex-col font-[var(--font-poppins)]">
         <SmoothScroll>
-          <Navbar />
           <main className="flex-grow">{children}</main>
         </SmoothScroll>
       </body>
