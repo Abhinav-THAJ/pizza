@@ -1,167 +1,304 @@
 'use client';
 import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const stats = [
-  { num: '06', label: 'Achieved International\nCulinary Awards' },
-  { num: '10', label: 'Worldwide Franchise\nDelivered' },
-  { num: '20', label: 'Achieved Worldwide\nCulinary Recognition' },
+  { num: 6, suffix: '', label: 'Achieved International\nCulinary Awards' },
+  { num: 10, suffix: '', label: 'Worldwide Franchise\nDelivered' },
+  { num: 20, suffix: 'K+', label: 'Achieved Worldwide\nCulinary Recognition' },
 ];
 
-export function Hero() {
-  const pizzaRef = useRef<HTMLDivElement>(null);
-  const heroRef = useRef<HTMLDivElement>(null);
+// Animated counter hook
+function AnimatedNumber({ target, suffix }: { target: number; suffix: string }) {
+  const count = useMotionValue(0);
+  const rounded = useMotionValue('0');
+  const ref = useRef<HTMLSpanElement>(null);
+  const started = useRef(false);
 
   useEffect(() => {
-    // Floating pizza animation
-    if (pizzaRef.current) {
+    const el = ref.current;
+    if (!el) return;
+    const trigger = ScrollTrigger.create({
+      trigger: el,
+      start: 'top 85%',
+      onEnter: () => {
+        if (started.current) return;
+        started.current = true;
+        const ctrl = animate(count, target, {
+          duration: 2,
+          ease: 'easeOut',
+          onUpdate: (v) => {
+            rounded.set(Math.round(v).toString());
+          },
+        });
+        return () => ctrl.stop();
+      },
+    });
+    return () => trigger.kill();
+  }, [target]);
+
+  return (
+    <span ref={ref} className="tabular-nums">
+      <motion.span>{rounded}</motion.span>{suffix}
+    </span>
+  );
+}
+
+export function Hero() {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const pizzaRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Floating pizza
       gsap.to(pizzaRef.current, {
-        y: -22,
+        y: -24,
         rotation: -5,
-        duration: 3,
+        duration: 3.2,
         ease: 'sine.inOut',
         yoyo: true,
         repeat: -1,
       });
-    }
 
-    // Parallax on scroll
-    const onScroll = () => {
-      if (pizzaRef.current) {
-        const scrollY = window.scrollY;
-        gsap.to(pizzaRef.current, {
-          y: -22 + scrollY * 0.15,
-          duration: 0.5,
-          ease: 'none',
+      // Parallax pizza on scroll
+      ScrollTrigger.create({
+        trigger: heroRef.current,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true,
+        onUpdate: (self) => {
+          gsap.set(pizzaRef.current, { y: self.progress * 120 - 24 });
+        },
+      });
+
+      // Word-by-word headline reveal
+      if (headlineRef.current) {
+        const words = headlineRef.current.querySelectorAll('.word');
+        gsap.from(words, {
+          y: 60,
+          opacity: 0,
+          rotateX: -40,
+          duration: 0.7,
+          stagger: 0.08,
+          ease: 'power3.out',
+          delay: 0.3,
         });
       }
-    };
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+
+      // Stagger entrance for stat items
+      gsap.from('.hero-stat', {
+        y: 30,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.15,
+        delay: 0.9,
+        ease: 'power2.out',
+      });
+
+      // Buttons magnetic entrance
+      gsap.from('.hero-btn', {
+        scale: 0.8,
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.12,
+        delay: 0.75,
+        ease: 'back.out(1.5)',
+      });
+    }, heroRef);
+    return () => ctx.revert();
   }, []);
+
+  // Magnetic button effect
+  const handleMagnet = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    gsap.to(btn, { x: x * 0.3, y: y * 0.3, duration: 0.3, ease: 'power2.out' });
+  };
+  const handleMagnetLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
+    gsap.to(e.currentTarget, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1,0.4)' });
+  };
 
   return (
     <section
       ref={heroRef}
       id="home"
-      className="relative min-h-screen bg-[#F5F0E8] pt-[68px] overflow-hidden"
+      className="relative min-h-screen bg-[#F5F0E8] pt-[70px] overflow-hidden"
     >
-      {/* Background decorative circle */}
-      <div className="absolute right-[-80px] top-[50px] w-[600px] h-[600px] rounded-full bg-[#EDE8DD] opacity-60 -z-0" />
+      {/* Animated background blobs */}
+      <motion.div
+        animate={{ scale: [1, 1.1, 1], opacity: [0.4, 0.6, 0.4] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute right-[-60px] top-[40px] w-[640px] h-[640px] rounded-full bg-[#EDE8DD]"
+      />
+      <motion.div
+        animate={{ scale: [1.1, 1, 1.1], opacity: [0.2, 0.35, 0.2] }}
+        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+        className="absolute right-[100px] top-[200px] w-[300px] h-[300px] rounded-full bg-[#E8341A]/8"
+      />
 
-      <div className="relative z-10 max-w-[1200px] mx-auto px-6 flex items-center min-h-[calc(100vh-68px)]">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-6 flex items-center min-h-[calc(100vh-70px)]">
         {/* Left Content */}
-        <div className="flex-1 pr-8 pt-8">
-          {/* Small label */}
+        <div className="flex-1 pr-8 pt-4">
+          {/* Label */}
           <motion.p
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-[11px] font-semibold tracking-[3px] uppercase text-[#E8341A] mb-4"
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-[11px] font-semibold tracking-[3px] uppercase text-[#E8341A] mb-5 flex items-center gap-2"
           >
-            ★ World Best Restaurant
+            <motion.span
+              animate={{ rotate: [0, 20, -20, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 3 }}
+              className="inline-block"
+            >
+              ★
+            </motion.span>
+            World Best Restaurant
           </motion.p>
 
-          {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
-            className="text-[52px] md:text-[62px] font-bold leading-[1.1] text-[#1A1A1A] mb-6"
-            style={{ fontFamily: 'Poppins, sans-serif' }}
+          {/* Headline – word split */}
+          <h1
+            ref={headlineRef}
+            className="text-[54px] md:text-[64px] font-bold leading-[1.1] text-[#1A1A1A] mb-6 overflow-hidden"
+            style={{ perspective: '800px' }}
           >
-            Flavors that<br />
-            speak louder<br />
-            than words!
-          </motion.h1>
+            {['Flavors', 'that'].map((w, i) => (
+              <span key={i} className="word inline-block mr-[0.25em]">{w}</span>
+            ))}
+            <br />
+            {['speak', 'louder'].map((w, i) => (
+              <span key={i} className="word inline-block mr-[0.25em]">{w}</span>
+            ))}
+            <br />
+            {['than', 'words!'].map((w, i) => (
+              <span key={i} className="word inline-block mr-[0.25em]">{w}</span>
+            ))}
+          </h1>
 
           {/* Description */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="text-[14px] text-[#666] leading-relaxed max-w-[380px] mb-8"
+            transition={{ duration: 0.6, delay: 0.55 }}
+            className="text-[14px] text-[#666] leading-[1.8] max-w-[380px] mb-8"
           >
-            The flavors at this eatery are so rich, vibrant and memorable that they leave a lasting impression on the diner. The emphasis on "speaking louder than words" implies that the culinary experience is so powerful that it transcends the need for verbal expression.
+            The flavors at this eatery are so rich, vibrant and memorable that they leave a lasting impression. Our culinary experience transcends the need for verbal expression.
           </motion.p>
 
           {/* Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.65 }}
-            className="flex items-center gap-4 mb-12"
-          >
-            <motion.button
-              whileHover={{ scale: 1.04, backgroundColor: '#C42B14' }}
-              whileTap={{ scale: 0.97 }}
-              className="bg-[#E8341A] text-white text-[13px] font-semibold px-7 py-3 rounded-full transition-colors duration-200"
+          <div className="flex items-center gap-4 mb-14">
+            <button
+              onMouseMove={handleMagnet}
+              onMouseLeave={handleMagnetLeave}
+              className="hero-btn bg-[#E8341A] text-white text-[13px] font-semibold px-8 py-3.5 rounded-full shadow-lg shadow-[#E8341A]/25 hover:shadow-[#E8341A]/40 hover:bg-[#C42B14] transition-colors duration-200"
             >
               Order Now
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.04, backgroundColor: '#E8341A', color: '#fff' }}
-              whileTap={{ scale: 0.97 }}
-              className="border-2 border-[#E8341A] text-[#E8341A] text-[13px] font-semibold px-7 py-3 rounded-full transition-all duration-200"
+            </button>
+            <button
+              onMouseMove={handleMagnet}
+              onMouseLeave={handleMagnetLeave}
+              className="hero-btn border-2 border-[#E8341A] text-[#E8341A] text-[13px] font-semibold px-8 py-3.5 rounded-full hover:bg-[#E8341A] hover:text-white transition-all duration-200"
             >
               Book a Table
-            </motion.button>
-          </motion.div>
+            </button>
+          </div>
 
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="flex items-start gap-10"
-          >
+          {/* Stats with animated numbers */}
+          <div className="flex items-start gap-0">
             {stats.map((stat, i) => (
-              <div key={i} className="flex items-start gap-3">
-                {i > 0 && <div className="w-px h-10 bg-[#D5CFC7] mt-1" />}
-                <div className={i > 0 ? 'pl-0' : ''}>
-                  <div className="text-[32px] font-bold text-[#1A1A1A] leading-none mb-1">
-                    {stat.num}
+              <div key={i} className="hero-stat flex items-start">
+                {i > 0 && <div className="w-px h-12 bg-[#D5CFC7] mx-8 mt-1" />}
+                <div>
+                  <div className="text-[34px] font-black text-[#1A1A1A] leading-none mb-1">
+                    <AnimatedNumber target={stat.num} suffix={stat.suffix} />
                   </div>
-                  <div className="text-[11px] text-[#888] leading-snug whitespace-pre-line">
+                  <div className="text-[11px] text-[#888] leading-snug whitespace-pre-line max-w-[110px]">
                     {stat.label}
                   </div>
                 </div>
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
 
-        {/* Right – Pizza Image */}
+        {/* Right – Pizza */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.8, x: 60 }}
+          initial={{ opacity: 0, scale: 0.7, x: 80 }}
           animate={{ opacity: 1, scale: 1, x: 0 }}
-          transition={{ duration: 0.9, delay: 0.4, ease: 'easeOut' }}
+          transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           className="flex-1 flex justify-center items-center relative"
         >
           <div ref={pizzaRef} className="relative" style={{ transform: 'rotate(-8deg)' }}>
+            {/* Glow effect */}
+            <motion.div
+              animate={{ opacity: [0.3, 0.6, 0.3], scale: [0.95, 1.05, 0.95] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute inset-[-30px] rounded-full bg-[#E8341A]/15 blur-2xl"
+            />
             <img
               src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=85&fit=crop"
               alt="Featured Pizza"
-              className="w-[480px] h-[480px] object-cover rounded-full shadow-2xl"
-              style={{ boxShadow: '0 30px 80px rgba(0,0,0,0.18)' }}
+              className="w-[460px] h-[460px] object-cover rounded-full shadow-2xl relative z-10"
+              style={{ boxShadow: '0 40px 100px rgba(0,0,0,0.2)' }}
             />
-            {/* Decorative ring */}
+            {/* Spinning ring 1 */}
             <motion.div
-              animate={{ scale: [1, 1.06, 1], opacity: [0.4, 0.2, 0.4] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute inset-[-20px] rounded-full border-2 border-[#E8341A] opacity-30"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+              className="absolute inset-[-16px] rounded-full border border-dashed border-[#E8341A]/25"
             />
+            {/* Pulse ring 2 */}
+            <motion.div
+              animate={{ scale: [1, 1.08, 1], opacity: [0.5, 0.15, 0.5] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute inset-[-32px] rounded-full border-2 border-[#E8341A]/30"
+            />
+
+            {/* Floating badges */}
+            <motion.div
+              animate={{ y: [-6, 6, -6], rotate: [-3, 3, -3] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute -top-4 -right-4 bg-white rounded-2xl px-4 py-2.5 shadow-xl z-20"
+            >
+              <p className="text-[10px] font-bold text-[#E8341A] uppercase tracking-wider">Today's Special</p>
+              <p className="text-[13px] font-black text-[#1A1A1A]">Margherita 🍕</p>
+            </motion.div>
+
+            <motion.div
+              animate={{ y: [6, -6, 6], rotate: [3, -3, 3] }}
+              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+              className="absolute -bottom-2 -left-6 bg-[#E8341A] rounded-2xl px-4 py-2.5 shadow-xl z-20"
+            >
+              <p className="text-[10px] font-bold text-white/80 uppercase tracking-wider">Rating</p>
+              <p className="text-[13px] font-black text-white">⭐ 4.9 / 5.0</p>
+            </motion.div>
           </div>
         </motion.div>
       </div>
 
-      {/* Wave divider */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg viewBox="0 0 1440 40" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-          <path d="M0 40L1440 40L1440 20C1200 0 900 40 720 20C540 0 240 40 0 20V40Z" fill="#FFFFFF" opacity="0.5"/>
-        </svg>
-      </div>
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+      >
+        <p className="text-[10px] tracking-[3px] uppercase text-[#AAA]">Scroll</p>
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+          className="w-5 h-8 border-2 border-[#CCC] rounded-full flex items-start justify-center pt-1"
+        >
+          <div className="w-1 h-1.5 bg-[#E8341A] rounded-full" />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

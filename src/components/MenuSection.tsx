@@ -1,10 +1,38 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useRef, useEffect } from 'react';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
+
+// 3D tilt card hook
+function TiltCard({ children, className }: { children: React.ReactNode; className?: string }) {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotateX = useTransform(y, [-60, 60], [8, -8]);
+  const rotateY = useTransform(x, [-60, 60], [-8, 8]);
+  const springX = useSpring(rotateX, { stiffness: 200, damping: 20 });
+  const springY = useSpring(rotateY, { stiffness: 200, damping: 20 });
+
+  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    x.set(e.clientX - rect.left - rect.width / 2);
+    y.set(e.clientY - rect.top - rect.height / 2);
+  };
+  const handleLeave = () => { x.set(0); y.set(0); };
+
+  return (
+    <motion.div
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      style={{ rotateX: springX, rotateY: springY, transformStyle: 'preserve-3d', perspective: 800 }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 const categories = ['SALAD', 'SOUP', 'PASTA', 'PIZZA', 'ACCOMPANIMENT'];
 const subCategories = ['DESSERTS', 'GRILL'];
@@ -81,28 +109,34 @@ const allMenuItems: Record<string, { name: string; price: string; img: string }[
     { name: 'Mushroom Sauté', price: '$11.40', img: 'https://images.unsplash.com/photo-1614436163996-25cee5f54290?w=300&q=80&fit=crop' },
   ],
 };
+['DESSERTS', 'GRILL'].forEach(cat => { allMenuItems[cat] = allMenuItems['SALAD']; });
 
-// Fill missing categories
-['DESSERTS', 'GRILL'].forEach(cat => {
-  allMenuItems[cat] = allMenuItems['SALAD'];
-});
+import { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 
 export function MenuSection() {
   const [activeCategory, setActiveCategory] = useState('SALAD');
   const sectionRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
-
-  // Show only 12 items
   const items = (allMenuItems[activeCategory] || []).slice(0, 12);
 
   useEffect(() => {
     if (!sectionRef.current) return;
     const ctx = gsap.context(() => {
-      gsap.from('.menu-header', {
-        scrollTrigger: { trigger: '.menu-header', start: 'top 85%' },
+      // Section header clip-path reveal
+      gsap.from('.menu-section-header', {
+        scrollTrigger: { trigger: '.menu-section-header', start: 'top 85%' },
         y: 40,
         opacity: 0,
-        duration: 0.7,
+        duration: 0.8,
+        ease: 'power3.out',
+      });
+      // Tab bar slide in
+      gsap.from('.menu-tabs', {
+        scrollTrigger: { trigger: '.menu-tabs', start: 'top 88%' },
+        y: 20,
+        opacity: 0,
+        duration: 0.6,
         ease: 'power2.out',
       });
     }, sectionRef);
@@ -110,30 +144,19 @@ export function MenuSection() {
   }, []);
 
   const handleCategoryChange = (cat: string) => {
-    if (cat === activeCategory) return;
-    // Animate out
-    if (gridRef.current) {
-      gsap.to(gridRef.current.children, {
-        opacity: 0,
-        y: 10,
-        duration: 0.15,
-        stagger: 0.02,
-        onComplete: () => {
-          setActiveCategory(cat);
-        },
-      });
-    } else {
-      setActiveCategory(cat);
-    }
+    if (cat === activeCategory || !gridRef.current) return;
+    gsap.to(Array.from(gridRef.current.children), {
+      opacity: 0, y: 12, scale: 0.97, duration: 0.18, stagger: 0.02,
+      onComplete: () => setActiveCategory(cat),
+    });
   };
 
-  // Animate in when category changes
   useEffect(() => {
     if (!gridRef.current) return;
     gsap.fromTo(
-      gridRef.current.children,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.35, stagger: 0.04, ease: 'power2.out' }
+      Array.from(gridRef.current.children),
+      { opacity: 0, y: 24, scale: 0.95 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.05, ease: 'power3.out' }
     );
   }, [activeCategory]);
 
@@ -141,86 +164,91 @@ export function MenuSection() {
     <section ref={sectionRef} id="our-menu" className="bg-[#F5F0E8] py-20">
       <div className="max-w-[1200px] mx-auto px-6">
         {/* Header */}
-        <div className="menu-header mb-10">
-          <p className="text-[11px] font-semibold tracking-[3px] uppercase text-[#E8341A] mb-3">
-            ★ Our Menu
+        <div className="menu-section-header mb-10">
+          <p className="text-[11px] font-semibold tracking-[3px] uppercase text-[#E8341A] mb-3">★ Our Menu</p>
+          <p className="text-[14px] text-[#666] leading-relaxed max-w-[560px]">
+            The flavors at this eatery are so rich, vibrant and memorable that they leave a lasting impression on the diner.
           </p>
-          <div className="flex items-end justify-between flex-wrap gap-4">
-            <p className="text-[14px] text-[#666] leading-relaxed max-w-[560px]">
-              The flavors at this eatery are so rich, vibrant and memorable that they leave a lasting impression on the diner. The emphasis on "speaking louder than words" implies that the culinary experience is so powerful that it transcends the need for verbal expression.
-            </p>
-          </div>
         </div>
 
-        {/* Category Tabs Row 1 */}
-        <div className="flex items-center gap-0 border-b border-[#DDD8D0] mb-2">
+        {/* Category Tabs */}
+        <div className="menu-tabs flex items-center border-b border-[#DDD8D0] mb-8">
           {categories.map((cat) => (
-            <button
+            <motion.button
               key={cat}
               onClick={() => handleCategoryChange(cat)}
-              className={`text-[12px] font-semibold tracking-[1.5px] px-5 py-3 border-b-2 transition-all duration-200 ${
-                activeCategory === cat
-                  ? 'text-[#E8341A] border-[#E8341A]'
-                  : 'text-[#888] border-transparent hover:text-[#333]'
+              whileTap={{ scale: 0.96 }}
+              className={`relative text-[12px] font-semibold tracking-[1.5px] px-5 py-3 transition-colors duration-200 ${
+                activeCategory === cat ? 'text-[#E8341A]' : 'text-[#888] hover:text-[#333]'
               }`}
             >
               {cat}
-            </button>
+              {activeCategory === cat && (
+                <motion.span
+                  layoutId="menuUnderline"
+                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#E8341A]"
+                  transition={{ type: 'spring', bounce: 0.25, duration: 0.5 }}
+                />
+              )}
+            </motion.button>
           ))}
           <div className="flex-1" />
           {subCategories.map((cat) => (
-            <button
+            <motion.button
               key={cat}
               onClick={() => handleCategoryChange(cat)}
-              className={`text-[12px] font-semibold tracking-[1.5px] px-5 py-3 border-b-2 transition-all duration-200 ${
-                activeCategory === cat
-                  ? 'text-[#E8341A] border-[#E8341A]'
-                  : 'text-[#888] border-transparent hover:text-[#333]'
+              whileTap={{ scale: 0.96 }}
+              className={`relative text-[12px] font-semibold tracking-[1.5px] px-5 py-3 transition-colors duration-200 ${
+                activeCategory === cat ? 'text-[#E8341A]' : 'text-[#888] hover:text-[#333]'
               }`}
             >
               {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Food Grid 4 columns x 3 rows */}
-        <div ref={gridRef} className="grid grid-cols-4 gap-5 mb-10 mt-8">
-          {items.map((item, i) => (
-            <motion.div
-              key={`${activeCategory}-${i}`}
-              whileHover={{ y: -6, boxShadow: '0 16px 40px rgba(0,0,0,0.1)' }}
-              transition={{ duration: 0.25 }}
-              className="bg-white rounded-2xl p-4 flex flex-col items-center text-center cursor-pointer"
-            >
-              {/* Circular food image */}
-              <div className="w-[120px] h-[120px] rounded-full overflow-hidden mb-3 shadow-md">
-                <img
-                  src={item.img}
-                  alt={item.name}
-                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+              {activeCategory === cat && (
+                <motion.span
+                  layoutId="menuUnderline"
+                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#E8341A]"
+                  transition={{ type: 'spring', bounce: 0.25, duration: 0.5 }}
                 />
-              </div>
-              <h3 className="text-[13px] font-semibold text-[#1A1A1A] mb-1 leading-snug">
-                {item.name}
-              </h3>
-              <p className="text-[13px] font-bold text-[#1A1A1A] mb-3">{item.price}</p>
-              <motion.button
-                whileHover={{ backgroundColor: '#E8341A', color: '#fff', borderColor: '#E8341A' }}
-                whileTap={{ scale: 0.96 }}
-                className="border border-[#E8341A] text-[#E8341A] text-[11px] font-semibold px-4 py-1.5 rounded-full transition-all duration-200"
-              >
-                Order Now
-              </motion.button>
-            </motion.div>
+              )}
+            </motion.button>
           ))}
         </div>
 
-        {/* View All Button */}
+        {/* Food Grid – 3D tilt cards */}
+        <div ref={gridRef} className="grid grid-cols-4 gap-5 mb-10">
+          {items.map((item, i) => (
+            <TiltCard key={`${activeCategory}-${i}`} className="cursor-pointer">
+              <div className="bg-white rounded-2xl p-4 flex flex-col items-center text-center h-full shadow-sm hover:shadow-xl transition-shadow duration-300">
+                {/* Circular food image with spin on hover */}
+                <div className="w-[120px] h-[120px] rounded-full overflow-hidden mb-3 shadow-md group">
+                  <motion.img
+                    src={item.img}
+                    alt={item.name}
+                    whileHover={{ scale: 1.15, rotate: 5 }}
+                    transition={{ duration: 0.4 }}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="text-[13px] font-semibold text-[#1A1A1A] mb-1 leading-snug">{item.name}</h3>
+                <p className="text-[13px] font-bold text-[#1A1A1A] mb-3">{item.price}</p>
+                <motion.button
+                  whileHover={{ scale: 1.05, backgroundColor: '#E8341A', color: '#fff', borderColor: '#E8341A' }}
+                  whileTap={{ scale: 0.95 }}
+                  className="border border-[#E8341A] text-[#E8341A] text-[11px] font-semibold px-4 py-1.5 rounded-full transition-all duration-200 mt-auto"
+                >
+                  Order Now
+                </motion.button>
+              </div>
+            </TiltCard>
+          ))}
+        </div>
+
+        {/* View All */}
         <div className="flex justify-center">
           <motion.button
-            whileHover={{ scale: 1.04, backgroundColor: '#C42B14' }}
+            whileHover={{ scale: 1.05, backgroundColor: '#C42B14', boxShadow: '0 12px 30px rgba(232,52,26,0.35)' }}
             whileTap={{ scale: 0.97 }}
-            className="bg-[#E8341A] text-white text-[13px] font-semibold px-8 py-3 rounded-full transition-colors duration-200"
+            className="bg-[#E8341A] text-white text-[13px] font-semibold px-9 py-3.5 rounded-full shadow-md shadow-[#E8341A]/20 transition-all duration-200"
           >
             View All Menu
           </motion.button>
